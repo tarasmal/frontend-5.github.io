@@ -1,10 +1,11 @@
 import './App.css';
-import Input from "./components/Input";
+import Input from "./components/Input/Input";
+import Form from "./components/Form/Form";
 
 function App() {
   return (
     <div className="App">
-        <Input />
+        <Form id={'form1'}/>
     </div>
   );
 }
