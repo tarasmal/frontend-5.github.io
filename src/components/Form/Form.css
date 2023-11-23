@@ -9,3 +9,10 @@
     border-radius: 25px;
 
 }
+.container {
+    display: flex;
+    row-gap: 50px;
+}
+.result {
+    margin-left: 20px;
+}

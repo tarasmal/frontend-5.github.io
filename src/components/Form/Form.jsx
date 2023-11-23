@@ -5,6 +5,8 @@ import './Form.css';
 const Form = ({id}) => {
     const names = ['ПІБ', 'Група', 'ID-card', 'Дата народження', 'Email'];
     const [validInputs, setValidInputs] = useState(Array(names.length).fill(NaN));
+    const [data, setData] = useState({})
+    const [isResultShown, setIsResultShown] = useState(false);
     const ref = useRef(null);
     const regexpPatterns = useMemo(() => [
         /^([А-ЯІЇЄ][а-яіїє']+\s){2}[А-ЯІЇЄ][а-яіїє']+$/u,
@@ -31,32 +33,46 @@ const Form = ({id}) => {
         const formData = getFormData(e);
         const values = Object.values(formData);
         const validationResult = regexpPatterns.map((regexp, index) => regexp.test(values[index]))
-        setValidInputs(validationResult)
+        setValidInputs(validationResult);
+        setData(formData);
     }
     const onSubmit = (e) => {
         validateForm(e)
         if (validInputs.every((validationResult) => validationResult === true)) {
-            alert('YES')
+            setIsResultShown(true);
         }
         else {
-            alert('NO')
+            setIsResultShown(false);
         }
     }
 
     return (
-        <form id={id} ref={ref}>
-            {
-                names.map((name, index) =>
-                    <Input
-                        name={name}
-                        placeholder={name}
-                        key={name}
-                        isValid={validInputs[index]}
-                    />
-                )
-            }
-            <button id={'submit1'} onClick={onSubmit}>Відправити</button>
-        </form>
+        <div className={'container'}>
+            <form id={id} ref={ref}>
+                {
+                    names.map((name, index) =>
+                        <Input
+                            name={name}
+                            placeholder={name}
+                            key={name}
+                            isValid={validInputs[index]}
+                        />
+                    )
+                }
+                <button id={'submit1'} onClick={onSubmit}>Відправити</button>
+            </form>
+            <div className={'result'}>
+                {
+
+                    isResultShown ?
+                        Object.values(data).map(el => <h3>{el}</h3>)
+                        :
+                        <></>
+                }
+            </div>
+
+        </div>
+
     );
 };
 
