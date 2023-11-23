@@ -1,14 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import './Input.css';
 
-const Input = ({getValue, validate=()=>{}, ...props}) => {
+const Input = ({isValid, ...props}) => {
     const [value, setValue] = useState('')
-    const [isValid, setIsValid] = useState(true);
-
-    useEffect(() => {
-        validate(value)
-        getValue && getValue(value)
-    }, [value]);
     return (
         <>
             <input
