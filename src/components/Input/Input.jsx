@@ -3,6 +3,11 @@ import './Input.css';
 
 const Input = ({isValid, ...props}) => {
     const [value, setValue] = useState('')
+    useEffect(() => {
+        if (!isValid) {
+            setValue('')
+        }
+    }, [isValid]);
     return (
         <>
             <input
@@ -12,8 +17,8 @@ const Input = ({isValid, ...props}) => {
                 {...props}
             />
             {
-                !isValid &&
-                <div className={'validation'}>Введіть правильне значення</div>
+                isValid === false ?
+                <div className={'validation'}>Введіть правильне значення</div> : <></>
             }
         </>
 

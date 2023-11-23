@@ -4,7 +4,7 @@ import './Form.css';
 
 const Form = ({id}) => {
     const names = ['ПІБ', 'Група', 'ID-card', 'Дата народження', 'Email'];
-    const [validInputs, setValidInputs] = useState(Array(names.length).fill(true));
+    const [validInputs, setValidInputs] = useState(Array(names.length).fill(NaN));
     const ref = useRef(null);
     const regexpPatterns = useMemo(() => [
         /^([А-ЯІЇЄ][а-яіїє']+\s){2}[А-ЯІЇЄ][а-яіїє']+$/u,
@@ -13,6 +13,7 @@ const Form = ({id}) => {
         /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.\d{4}$/,
         /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
     ], [])
+
     const getFormData = (e) => {
         e.preventDefault()
         const form = ref.current
@@ -34,6 +35,12 @@ const Form = ({id}) => {
     }
     const onSubmit = (e) => {
         validateForm(e)
+        if (validInputs.every((validationResult) => validationResult === true)) {
+            alert('YES')
+        }
+        else {
+            alert('NO')
+        }
     }
 
     return (
