@@ -1,24 +1,28 @@
 import React, { useState } from 'react';
 import './Task2.css';
 
-const Cell = ({ id, onHover, onHoverOut, onClick, columnColors, hoveredColor }) => {
-    const onMouseEnterHandler = () => onHover(id);
-    const onMouseLeaveHandler = () => onHoverOut(id);
-    const onClickHandler = () => onClick(id);
-
+const Cell = ({
+                  id,
+                  onMouseEnter,
+                  onMouseLeave,
+                  onClick,
+                  onDoubleClick,
+                  columnColors,
+                  hoveredColor,
+              }) => {
     const column = (id - 1) % 6;
-    const isColumnColored = columnColors[column];
     const style = {
-        backgroundColor: id === 8 && hoveredColor ? hoveredColor : isColumnColored ? isColumnColored : undefined,
+        backgroundColor: columnColors[column] || (id === 8 && hoveredColor ? hoveredColor : ''),
     };
 
     return (
         <div
             id={`cell-${id}`}
             className="grid-item"
-            onMouseEnter={onMouseEnterHandler}
-            onMouseLeave={onMouseLeaveHandler}
-            onClick={onClickHandler}
+            onMouseEnter={() => onMouseEnter(id)}
+            onMouseLeave={() => onMouseLeave(id)}
+            onClick={() => onClick(id)}
+            onDoubleClick={() => onDoubleClick(id)}
             style={style}
         >
             {id}
@@ -26,10 +30,10 @@ const Cell = ({ id, onHover, onHoverOut, onClick, columnColors, hoveredColor }) 
     );
 };
 
-
 const Task2 = () => {
     const [hoveredCell, setHoveredCell] = useState(null);
     const [coloredColumns, setColoredColumns] = useState({});
+    const [colorPicker, setColorPicker] = useState({ show: false, cellId: null });
 
     const onHover = (id) => {
         if (id === 8) {
@@ -37,8 +41,10 @@ const Task2 = () => {
         }
     };
 
-    const onHoverOut = () => {
-        setHoveredCell(null);
+    const onHoverOut = (id) => {
+        if (id === 8) {
+            setHoveredCell(null);
+        }
     };
 
     const onClick = (id) => {
@@ -56,6 +62,21 @@ const Task2 = () => {
         setColoredColumns(newColoredColumns);
     };
 
+    const onDoubleClick = (cellId) => {
+        setColorPicker({
+            show: true,
+            cellId: cellId,
+        });
+    };
+
+    const handleColorChange = (color) => {
+        setColoredColumns({
+            ...coloredColumns,
+            [(colorPicker.cellId - 1) % 6]: color,
+        });
+        setColorPicker({ show: false, cellId: null }); // Hide color picker after color selection
+    };
+
     const getRandomColor = () => {
         const letters = '0123456789ABCDEF';
         let color = '#';
@@ -66,23 +87,34 @@ const Task2 = () => {
     };
 
     const cells = Array.from({ length: 36 }, (_, index) => index + 1);
+
     return (
-        <div className="grid-container">
-            {cells.map((id) => {
-                const column = (id - 1) % 6;
-                return (
-                    <Cell
-                        key={`cell-${id}`}
-                        id={id}
-                        onHover={onHover}
-                        onHoverOut={onHoverOut}
-                        onClick={onClick}
-                        columnColors={coloredColumns}
-                        hoveredColor={hoveredCell && id === 8 ? hoveredCell : null}
-                    />
-                );
-            })}
-        </div>
+        <>
+            <div className="grid-container">
+                {cells.map((id) => {
+                    return (
+                        <Cell
+                            key={`cell-${id}`}
+                            id={id}
+                            onMouseEnter={onHover}
+                            onMouseLeave={onHoverOut}
+                            onClick={onClick}
+                            onDoubleClick={onDoubleClick}
+                            columnColors={coloredColumns}
+                            hoveredColor={hoveredCell && id === 8 ? hoveredCell : null}
+                        />
+                    );
+                })}
+            </div>
+            {colorPicker.show && (
+                <input
+                    type="color"
+                    defaultValue={coloredColumns[(colorPicker.cellId - 1) % 6] || '#ffffff'}
+                    onChange={(e) => handleColorChange(e.target.value)}
+                    style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
+                />
+            )}
+        </>
     );
 };
 
